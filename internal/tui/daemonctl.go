@@ -36,6 +36,10 @@ func startDaemon(configDir, socketPath string) tea.Cmd {
 		}
 		defer logFile.Close()
 
+		// exe is this binary (os.Executable), the subcommand and flag names are constants, and the two
+		// values are the invoking user's own --config-dir/--socket paths, passed as single argv entries
+		// with no shell, so nothing here can run a different program or inject arguments.
+		// nosemgrep: go.lang.security.audit.dangerous-exec-command.dangerous-exec-command -- re-executes our own binary with fixed args; see above
 		cmd := exec.Command(exe, "daemon", "--config-dir", configDir, "--socket", socketPath)
 		cmd.Stdout = logFile
 		cmd.Stderr = logFile
